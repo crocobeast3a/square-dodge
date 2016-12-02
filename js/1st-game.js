@@ -59,7 +59,7 @@ function drawOver () {
 	background(200)
 	textAlign(CENTER,CENTER)
 	fill (0)
-	text("Command r to restart",windowWidth/2, windowHeight/2);
+	text("Command R to restart",windowWidth/2, windowHeight/2);
 
 }
 
