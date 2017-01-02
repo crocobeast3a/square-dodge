@@ -1,31 +1,57 @@
-var y
-var x
-var modePlay=1
-var modeOver=2
-var mode=modePlay
-var squares = [];
-var squareSpeed=1
+var modePlay = 1;
+var modeOver = 2;
+var rKey = 82
+var song;
+var boom
+var mode;
+var y;
+var x;
+var squares;
+var squareSpeed;
+var timeout
+var squareIntervalId;
+var speedIntervalId;
 
-function setup () {
-	createCanvas(windowWidth, windowHeight)
+function startGame() {
+	mode = modePlay
+	squares = [];
+	squareSpeed = 1
 	x=windowWidth/2
 	y=windowHeight/2
-	
-	setTimeout(function () {
+	timeout = setTimeout(function () {
 
-		setInterval(function () {
+		squareIntervalId = setInterval(function () {
 
 			squares.push(square());
 
 			console.log('spawning a new square', squares);
 
 		}, 500);
-		setInterval (function () {
+
+		speedIntervalId = setInterval(function () {
 			squareSpeed=squareSpeed+1
-		},30000)
+		}, 30000);
 
 	}, 3000);
-}  
+
+}
+function stopGame() {
+	clearInterval(squareIntervalId)
+	clearInterval(speedIntervalId)
+	clearTimeout(timeout)
+	mode = modeOver
+}
+
+function preload() {
+ song = loadSound('sound/background.mp3');
+ boom = loadSound('sound/explosion.mp3')
+}
+
+function setup () {
+	createCanvas(windowWidth, windowHeight)
+	song.loop()
+	startGame()
+}
 
 
 function draw () {
@@ -50,7 +76,10 @@ function drawPlay () {
 		fill (255, 0, 0)
 		rect(square.x, square.y, 30, 30);
 		square.y+=squareSpeed;
-		if (collideRectCircle(square.x, square.y, 30, 30, x, y, 80)) {mode=modeOver}
+		if (collideRectCircle(square.x, square.y, 30, 30, x, y, 80)) {
+			boom.play()
+			stopGame()
+		}
 		
 	}
 
@@ -59,14 +88,17 @@ function drawOver () {
 	background(200)
 	textAlign(CENTER,CENTER)
 	fill (0)
-	text("Command R to restart",windowWidth/2, windowHeight/2);
+	text("Press R to restart",windowWidth/2, windowHeight/2);
 
 }
 
 
 
 function keyPressed() {
-	if (keyCode === LEFT_ARROW) {
+	if (keyCode === rKey) {
+		stopGame()
+		startGame()
+	} else if (keyCode === LEFT_ARROW) {
 		x=x-50
 		if (x <0){x=displayWidth}
 		}
